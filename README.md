@@ -1,1 +1,1330 @@
-# AysChat
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>هوش مصنوعی AysChat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Vazirmatn:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline';
+        style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com 'unsafe-inline';
+
+        font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com https://fonts.googleapis.com;
+        connect-src 'self' https://generativelanguage.googleapis.com https://assets.mixkit.co;
+        media-src 'self' https://assets.mixkit.co;
+    ">
+    
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=63072000; includeSubDomains; preload">
+    
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --user-color: #4cc9f0;
+            --bot-color: #f72585;
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --card-bg: #ffffff;
+            --error-color: #ef233c;
+            --success-color: #4ad66d;
+            --warning-color: #ff9e00;
+        }
+ 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            /* تغییر فونت: اول Vazirmatn برای فارسی، سپس Roboto برای انگلیسی و بقیه */
+            font-family: 'Vazirmatn', 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* هدر جدید با طراحی زیبا */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px; /* fixed header height */
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo {
+            width: 36px;
+            height: 36px;
+            background-color: white;
+            border-radius: 30%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-weight: bold;
+            overflow: hidden; /* برای جای دادن تصویر درون دایره */
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .header-text h1 {
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .header-text p {
+            font-size: 0.7rem;
+            opacity: 0.9;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* صفحه خوش‌آمدگویی */
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            position: absolute; /* Take it out of flow to not affect chat container height */
+            top: 130px; /* Below header */
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-color); /* Ensure it covers chat if visible */
+            z-index: 5; /* Below header, above input area */
+            transition: opacity 0.5s ease-in-out;
+            background-image: url(''); /* Ays.jpg base64 encoded */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.9;
+        }
+
+        .welcome-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 0.2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .welcome-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            text-shadow: 5px 4px 1px rgba(0,0,0,0.1);
+        }
+
+        .welcome-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-color);
+            opacity: 0.7;
+            margin-bottom: 0.1rem;
+            line-height: 1.6;
+            background-color: rgba(255,255,255,0.7); /* پس‌زمینه برای خوانایی بهتر روی تصویر */
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .welcome-slogan {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--bot-color);
+            margin-top: 0.7rem;
+            animation: slideInUp 4s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .welcome-features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.7rem;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 2rem;
+            padding: 1rem;
+            width: calc(50% - 0.5rem);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            background-color: rgba(255,255,255,0.8); /* پس‌زمینه برای خوانایی بهتر روی تصویر */
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {        img-src 'self' data: https://generativelanguage.googleapis.com; /* اضافه شدن دامنه Gemini API برای تصاویر */
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-title {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+
+        .feature-desc {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            line-height: 1.4;
+        }
+
+        /* صفحه بارگذاری */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 3s;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(67, 97, 238, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin-bottom: 1.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-subtext {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* صفحه چت */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            position: absolute; /* Position it below header */
+            top: 60px; /* Height of header */
+            bottom: 80px; /* Approximate height of input area */
+            left: 0;
+            right: 0;
+            overflow: hidden; /* Prevent chat container from causing scroll */
+        }
+
+        #chat-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            padding: 1rem;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) transparent;
+            padding-bottom: 1rem; /* Adjust as needed, messages should not be hidden by input area */
+        }
+
+        #chat-box::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chat-box::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        .message {
+            max-width: 90%;
+            padding: 0.8rem 1rem;
+            border-radius: 1rem;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            font-size: 0.85rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--user-color);
+            color: white;
+            border-bottom-right-radius: 0.3rem;
+            margin-left: 5%;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border-bottom-left-radius: 0.3rem;
+            border: 1px solid #eee;
+            margin-right: 5%;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+            font-size: 0.75rem;
+        }
+
+        .user-message .message-header {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .bot-message .message-header {
+            color: var(--bot-color);
+        }
+
+        .input-area {
+            display: flex;
+            gap: 1.5rem;
+            padding: 0.8rem;
+            background-color: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+            margin: 0 1rem 1rem; /* Adjusted for better appearance */
+            position: fixed; /* Stick to bottom */
+            bottom: 0;
+            left: 10;
+            right: 10;
+            max-width: calc(100% - 2rem);
+            z-index: 50;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            align-items: center; /* Vertically align items */
+            height: 90px; /* Fixed height for input area */
+            margin: 0 auto 1rem; /* Center horizontally with margin */
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 1.5rem;
+            outline: none;
+            font-size: 0.85rem;
+            background-color: #f1f3f5;
+            transition: all 0.1s ease-in-out; /* سریع تر شدن انتقال */
+        }
+
+        #user-input:focus {
+            background-color: #e9ecef;
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+
+        #send-button {
+            padding: 0.8rem 1.2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        #send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.3);
+        }
+
+        #send-button:active {
+            transform: translateY(0);
+        }
+
+        .typing-indicator {
+            display: inline-flex;
+            gap: 0.4rem;
+            padding: 0.8rem 1.2rem;
+            background-color: var(--card-bg);
+            border-radius: 1.5rem;
+            align-self: flex-start;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            margin-right: 10%;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--bot-color);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: typingAnimation 1s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-3px); opacity: 1; }
+        }
+
+        .timestamp {
+            font-size: 0.6rem;
+            opacity: 0.7;
+            margin-top: 0.3rem;
+            text-align: left;
+        }
+
+        /* افکت‌های پیام */
+        .bot-message::before {
+            content: "";
+            position: absolute;
+            right: -8px;
+            top: 12px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 8px solid var(--card-bg);
+        }
+
+        .user-message::after {
+            content: "";
+            position: absolute;
+            left: -8px;
+            top: 12px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid var(--user-color);
+        }
+
+        /* وضعیت آنلاین/آفلاین */
+        .status-indicator {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            z-index: 90;
+            animation: slideDown 0.5s ease-out;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideDown {
+            from { top: -30px; opacity: 0; }
+            to { top: 70px; opacity: 1; }
+        }
+
+        .online {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .offline {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        /* صفحه خطا */
+        .error-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+            background-color: #fff5f5;
+            position: absolute; /* Similar positioning to welcome screen */
+            top: 60px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 5;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            color: var(--error-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--error-color);
+        }
+
+        .error-message {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .retry-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .retry-btn:hover {
+            background-color: #d90429;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(239, 35, 60, 0.3);
+        }
+
+        /* دکمه اطلاعات/راهنما */
+        .info-btn {
+            padding: 0.8rem;
+            background-color: #f1f3f5;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
+        .info-btn:hover {
+            background-color: #e9ecef;
+            transform: scale(1.05);
+        }
+
+        /* منوی تنظیمات */
+        .settings-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background-color: var(--card-bg);
+            box-shadow: -2px 0 12px rgba(0, 0, 0, 0.1);
+            z-index: 200;
+            transition: all 0.3s ease-out;
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+        }
+
+        .settings-menu.open {
+            right: 0;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .settings-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .close-settings {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .settings-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 0.8rem;
+            color: var(--primary-color);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            padding: 0.5rem 0;
+        }
+
+        .setting-label {
+            font-size: 0.8rem;
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .theme-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .theme-option.selected {
+            border-color: var(--primary-color);
+        }
+
+        /* سوئیچ */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* انیمیشن‌های ویژه */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* حالت‌های تم */
+        .dark-theme {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --primary-color: #7b2cbf;
+            --secondary-color: #5a189a;
+            --user-color: #4361ee;
+            --bot-color: #f72585;
+        }
+
+        .light-theme {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --user-color: #4cc9f0;
+            --bot-color: #f72585;
+        }
+
+        .nature-theme {
+            --bg-color: #f1faee;
+            --card-bg: #ffffff;
+            --text-color: #1d3557;
+            --primary-color: #457b9d;
+            --secondary-color: #1d3557;
+            --user-color: #a8dadc;
+            --bot-color: #e63946;
+        }
+
+        /* رسپانسیو */
+        @media (max-width: 768px) {
+            .welcome-features {
+                flex-direction: column;
+            }
+            
+            .feature-card {
+                width: 100%;
+            }
+            
+            .header-text h1 {
+                font-size: 1rem;
+            }
+            
+            .header-text p {
+                font-size: 0.6rem;
+            }
+            
+            #user-input, #send-button {
+                padding: 0.7rem;
+                font-size: 0.8rem;
+            }
+            
+            .message {
+                max-width: 85%;
+                font-size: 0.8rem;
+            }
+
+            /* Adjust input area for mobile, might need more specific handling for virtual keyboard */
+            .input-area {
+                padding: 0.5rem;
+                margin: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">در حال بارگذاری...</div>
+        <div class="loading-subtext">لطفاً چند لحظه صبر کنید</div>
+    </div>
+
+    <div class="app-header">
+        <div class="header-content">
+            <div class="logo">AYS</div>
+            <div class="header-text">
+                <h1>هوش مصنوعی AysChat</h1>
+                <p>دستیار هوشمند شما</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="header-btn info-btn" id="info-btn">
+                <i class="fas fa-info-circle"></i>
+            </button>
+            <button class="header-btn" id="settings-toggle">
+                <i class="fas fa-cog"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="welcome-screen" id="welcome-screen">
+        <div class="welcome-icon floating">
+            <i class="fas fa-robot"></i>
+        </div>
+        <h1 class="welcome-title">به AysChat خوش آمدید!</h1>
+        <p class="welcome-subtitle">من دستیار هوشمند شما هستم. می‌توانم به سوالات شما پاسخ دهم، در حل مشکلات کمک کنم و اطلاعات مفیدی ارائه دهم.</p>
+        
+        <p class="welcome-slogan">چت گرم، پاسخ‌های خنک!<br />نبوغ مصنوعی،  خالص و شفاف!</p>
+        
+        <div class="welcome-features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3 class="feature-title">پاسخ‌های هوشمند</h3>
+                <p class="feature-desc">با استفاده از فناوری پیشرفته، پاسخ‌های دقیق و هوشمندانه دریافت کنید.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-language"></i>
+                </div>
+                <h3 class="feature-title">پشتیبانی چندزبانه</h3>
+                <p class="feature-desc">به زبان‌های مختلف صحبت کنید و پاسخ دریافت کنید. من فارسی را به خوبی می‌فهمم.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3 class="feature-title">سرعت بالا</h3>
+                <p class="feature-desc">پاسخ‌های سریع و بدون تأخیر برای تجربه چت روان و لذت‌بخش.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3 class="feature-title">حریم خصوصی</h3>
+                <p class="feature-desc">مکالمات شما محرمانه می‌ماند و اطلاعات شخصی شما ذخیره نمی‌شود.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="chat-container" id="chat-container" style="display: none;">
+        <div id="chat-box">
+            </div>
+    </div>
+
+    <div class="input-area">
+        <button class="info-btn" id="info-btn-input">
+            <i class="fas fa-info-circle"></i>
+        </button>
+        <input type="text" id="user-input" placeholder="پیام خود را بنویسید..." autocomplete="off">
+        <button id="send-button" onclick="sendMessage()">
+            <i class="fas fa-paper-plane"></i>
+            ارسال
+        </button>
+    </div>
+
+    <div class="error-screen" id="error-screen" style="display: none;">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h1 class="error-title">اتصال اینترنت قطع است!</h1>
+        <p class="error-message">به نظر می‌رسد دستگاه شما به اینترنت متصل نیست. لطفاً اتصال اینترنت خود را بررسی کرده و دوباره امتحان کنید.</p>
+        <button class="retry-btn" id="retry-btn">
+            <i class="fas fa-sync-alt"></i> تلاش مجدد
+        </button>
+    </div>
+
+    <div class="settings-menu" id="settings-menu">
+        <div class="settings-header">
+            <h2 class="settings-title">تنظیمات</h2>
+            <button class="close-settings" id="close-settings">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="settings-section">
+            <h3 class="section-title">ظاهر برنامه</h3>
+            <div class="setting-item">
+                <span class="setting-label">تم سایت:</span>
+            </div>
+            <div class="theme-selector">
+                <div class="theme-option light-theme selected" data-theme="light">L</div>
+                <div class="theme-option dark-theme" data-theme="dark">D</div>
+                <div class="theme-option nature-theme" data-theme="nature">N</div>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h3 class="section-title">تنظیمات صدا (فقط اثرهای صوتی)</h3>
+            <div class="setting-item">
+                <span class="setting-label">اثرهای صوتی:</span>
+                <label class="switch">
+                    <input type="checkbox" id="sound-effects" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h3 class="section-title">سایر تنظیمات</h3>
+            <div class="setting-item">
+                <span class="setting-label">حالت تایپ هوشمند:</span>
+                <label class="switch">
+                    <input type="checkbox" id="smart-typing" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="setting-item">
+                <span class="setting-label">انیمیشن‌ها:</span>
+                <label class="switch">
+                    <input type="checkbox" id="animations" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h3 class="section-title">درباره برنامه</h3>
+            <p style="font-size: 0.8rem; line-height: 1.5; margin-bottom: 1rem;">
+                چت هوشمند با فناوری پیشرفته Ays <br>
+                نسخه 1.0.0<br>
+                توسعه داده شده توسط تیم AysChat 
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // --- !!! هشدار امنیتی بسیار مهم !!! ---
+        // این کلیدها به صورت مستقیم در کد سمت کلاینت قرار گرفته‌اند.
+        // این روش برای تست و توسعه اولیه مناسب است، اما برای محیط عملیاتی (Production) به شدت ناامن است.
+        // هر کسی که به کد شما دسترسی داشته باشد، می‌تواند این کلیدها را ببیند و از آن‌ها سوءاستفاده کند.
+        // برای امنیت واقعی، باید از یک Backend Server استفاده کنید و کلیدها را در آنجا نگهداری کنید.
+        const GEMINI_API_KEYS = [
+            'AIzaSyAR05hsGAEyaNTLcj05NbhM8xU7FYvmNRg',
+            'AIzaSyD10Nj1jV_KEwUd9Dio62CHBdB6WeuU6ng',
+            'AIzaSyDf5oMDovldeweCto6jJ2KbMZ2vqkgg9GY'
+        ];
+        
+        // تنظیمات
+        const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const chatContainer = document.getElementById('chat-container');
+        const errorScreen = document.getElementById('error-screen');
+        const retryBtn = document.getElementById('retry-btn');
+        const settingsMenu = document.getElementById('settings-menu');
+        const settingsToggle = document.getElementById('settings-toggle');
+        const closeSettings = document.getElementById('close-settings');
+        const themeOptions = document.querySelectorAll('.theme-option');
+        const loadingScreen = document.getElementById('loading-screen');
+        const appHeader = document.querySelector('.app-header');
+        const inputArea = document.querySelector('.input-area');
+        const infoBtnHeader = document.getElementById('info-btn'); 
+        const infoBtnInput = document.getElementById('info-btn-input'); 
+        
+        // وضعیت برنامه
+        let isOnline = true;
+        
+        // شبیه‌سازی بارگذاری اولیه
+        setTimeout(() => {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                checkConnection();
+            }, 500); // کاهش زمان برای بارگذاری سریع‌تر
+        }, 1000); // کاهش زمان برای بارگذاری سریع‌تر
+        
+        // تابع ایمن برای ارتباط با API Gemini
+        // این تابع تلاش می‌کند با کلیدهای مختلف API درخواست را ارسال کند.
+        async function secureFetchGemini(messageContent, attempt = 0) {
+            // اگر تمام کلیدها امتحان شده و نتیجه‌ای نداشتند، خطا برگردانده شود.
+            if (attempt >= GEMINI_API_KEYS.length) {
+                console.error('All Gemini API keys failed after multiple attempts.');
+                // پیام خطای جدید
+                return { error: 'خطا در برقراری ارتباط با AysChat. بعدا تلاش کنید.' };
+            }
+
+            const currentKey = GEMINI_API_KEYS[attempt];
+            // یک بررسی ساده برای اطمینان از اینکه کلید خالی نیست
+            if (!currentKey || currentKey.trim() === '') {
+                console.error(`API Key at index ${attempt} is empty or invalid.`);
+                return secureFetchGemini(messageContent, attempt + 1); // تلاش با کلید بعدی
+            }
+
+            // ساخت URL کامل با کلید API فعال
+            const url = `${GEMINI_BASE_URL}?key=${currentKey}`;
+            
+            // ساخت بدنه درخواست (payload) مطابق با مستندات Gemini API
+            const requestBody = {
+                contents: [{
+                    role: "user", // نقش کاربر
+                    parts: [{
+                        text: messageContent
+                    }]
+                }],
+                generationConfig: {
+                    // می‌توانید تنظیمات بیشتری مانند temperature, topK, topP را اینجا اضافه کنید
+                    // برای مثال: "temperature": 0.9,
+                }
+            };
+
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(requestBody)
+                });
+                
+                // اگر پاسخ موفقیت آمیز نبود (مثلاً 4xx یا 5xx)
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ message: response.statusText }));
+                    console.error(`Gemini API Error (Key ${attempt + 1}): Status ${response.status}, Error: ${JSON.stringify(errorData)}`);
+                    
+                    // اگر خطای 4xx بود (مانند 400 Bad Request, 401 Unauthorized, 403 Forbidden, 429 Too Many Requests)
+                    // تلاش با کلید بعدی
+                    if (response.status >= 400 && response.status < 500) {
+                        return secureFetchGemini(messageContent, attempt + 1); 
+                    }
+                    // برای خطاهای سرور (5xx) یا سایر خطاهای غیرقابل مدیریت، خطا را پرتاب کنید.
+                    throw new Error(`خطای سرور: ${response.status} ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                // استخراج پاسخ از ساختار JSON API Gemini
+                const replyText = data.candidates && data.candidates.length > 0 && 
+                                  data.candidates[0].content && data.candidates[0].content.parts &&
+                                  data.candidates[0].content.parts.length > 0 ? 
+                                  data.candidates[0].content.parts[0].text : 'خطا در برقراری ارتباط با AysChat بعدا تلاش کنید.';
+                
+                return { reply: replyText };
+
+            } catch (error) {
+                console.error('Network or Gemini API processing error:', error);
+                // اگر خطای شبکه بود، به کلید بعدی سوئیچ نمی‌کنیم چون مشکل از کلید نیست.
+                // فقط یک پیام خطا نمایش می‌دهیم.
+                // پیام خطای جدید
+                return { error: `خطا در برقراری ارتباط با AysChat بعدا تلاش کنید.` };
+            }
+        }
+        
+        // بررسی وضعیت اتصال اینترنت
+        function checkConnection() {
+            isOnline = navigator.onLine;
+            updateUI();
+            // بلافاصله پس از آنلاین شدن، فوکوس و تنظیمات صفحه چت
+            if (isOnline) {
+                userInput.focus();
+                adjustChatLayout();
+            }
+        }
+        
+        // به‌روزرسانی UI بر اساس وضعیت
+        function updateUI() {
+            if (isOnline) {
+                welcomeScreen.style.display = 'flex';
+                errorScreen.style.display = 'none';
+                chatContainer.style.display = 'none'; 
+                showStatus('آنلاین', 'online');
+            } else {
+                welcomeScreen.style.display = 'none';
+                chatContainer.style.display = 'none';
+                errorScreen.style.display = 'flex';
+                showStatus('آفلاین', 'offline');
+            }
+        }
+        
+        // نمایش وضعیت آنلاین/آفلاین
+        function showStatus(text, type) {
+            const existingStatus = document.querySelector('.status-indicator');
+            if (existingStatus) existingStatus.remove();
+            
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status-indicator ${type}`;
+            statusDiv.textContent = text;
+            document.body.appendChild(statusDiv);
+            
+            setTimeout(() => {
+                statusDiv.style.opacity = '0';
+                setTimeout(() => statusDiv.remove(), 500);
+            }, 3000);
+        }
+        
+        // تابع نمایش پیام جدید
+        function addMessage(role, content) {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}-message`;
+            
+            let headerIcon, headerText;
+            if (role === 'user') {
+                headerIcon = '<i class="fas fa-user"></i>';
+                headerText = 'شما';
+            } else {
+                headerIcon = '<i class="fas fa-robot"></i>';
+                headerText = 'AysChat';
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    ${headerIcon}
+                    ${headerText}
+                </div>
+                ${content}
+                <div class="timestamp">${timeString}</div>
+            `;
+            
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        
+        // تابع نمایش وضعیت تایپ
+        function showTyping() {
+            if (!document.getElementById('smart-typing').checked) {
+                return;
+            }
+
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            chatBox.appendChild(typingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        
+        // تابع مخفی کردن وضعیت تایپ
+        function hideTyping() {
+            const typing = document.getElementById('typing-indicator');
+            if (typing) typing.remove();
+        }
+        
+        // تابع پخش اثرات صوتی (اگر فعال باشد)
+        function playSoundEffect(soundUrl) {
+            if (document.getElementById('sound-effects').checked) {
+                try {
+                    const audio = new Audio(soundUrl);
+                    // play() یک Promise برمی‌گرداند که نیاز به مدیریت دارد.
+                    audio.play().catch(e => console.warn('Audio playback failed:', e));
+                } catch (e) {
+                    console.error('Error creating audio object:', e);
+                }
+            }
+        }
+
+        // تابع ارسال پیام
+        async function sendMessage() {
+            if (!isOnline) {
+                showStatus('شما آفلاین هستید!', 'offline');
+                return;
+            }
+
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            // نمایش پیام کاربر
+            addMessage('user', message);
+            userInput.value = '';
+            sendButton.disabled = true;
+            
+            // بررسی سوالات مربوط به سازنده
+            const lowerCaseMessage = message.toLowerCase();
+            if (lowerCaseMessage.includes('چه کسی تو را ساخته') || 
+                lowerCaseMessage.includes('چه کسی ساخته شدی') ||
+                lowerCaseMessage.includes('سازنده تو کیست') ||
+                lowerCaseMessage.includes('توسط چه کسی آموزش دیده ای') ||
+                lowerCaseMessage.includes('تو کی هستی')) { // اضافه شدن "تو کی هستی"
+                hideTyping(); // اگر قبلاً شروع شده بود، مخفی کن
+                addMessage('bot', 'من یک هوش مصنوعی هستم که توسط تیم AysChat توسعه و آموزش داده شده‌ام.');
+                playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-confirmation-909.mp3'); 
+                sendButton.disabled = false;
+                userInput.focus();
+                return; // از ارسال به API Gemini جلوگیری می‌کند
+            }
+
+            // نمایش وضعیت تایپ ربات (اگر فعال باشد)
+            showTyping();
+            
+            // پنهان کردن صفحه خوش‌آمدگویی و نمایش چت
+            welcomeScreen.style.display = 'none';
+            chatContainer.style.display = 'flex';
+            
+            // تنظیم ارتفاع چت‌باکس
+            adjustChatLayout(); 
+
+            // ارسال به API Gemini
+            const response = await secureFetchGemini(message);
+            
+            hideTyping();
+            if (response.error) {
+                // نمایش پیام خطای سفارشی شده
+                addMessage('bot', `<strong>خطا:</strong> ${response.error}`);
+                playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-bleep-error-1961.mp3'); 
+            } else {
+                addMessage('bot', response.reply);
+                playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-confirmation-909.mp3'); 
+            }
+            
+            sendButton.disabled = false;
+            userInput.focus(); // فوکوس مجدد روی کادر ورودی برای تجربه سریع‌تر
+        }
+        
+        // فعال کردن ارسال با Enter
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // جلوگیری از ایجاد خط جدید در فیلد متنی
+                sendMessage();
+            }
+        });
+        
+        // رویدادهای دکمه‌ها
+        retryBtn.addEventListener('click', checkConnection);
+        
+        settingsToggle.addEventListener('click', () => {
+            settingsMenu.classList.add('open');
+            playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-button-click-1123.mp3'); 
+        });
+        
+        closeSettings.addEventListener('click', () => {
+            settingsMenu.classList.remove('open');
+            playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-fast-reverse-sweep-transition-2559.mp3'); 
+        });
+
+        // مدیریت دکمه‌های اطلاعات/راهنما (جایگزین دکمه‌های میکروفون)
+        infoBtnHeader.addEventListener('click', () => {
+            alert('AysChat هوش مصنوعی شماست! برای اطلاعات بیشتر، به بخش "درباره برنامه" در تنظیمات مراجعه کنید.');
+            playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-game-alarm-1003.mp3');
+        });
+        infoBtnInput.addEventListener('click', () => {
+            alert('AysChat هوش مصنوعی شماست! برای اطلاعات بیشتر، به بخش "درباره برنامه" در تنظیمات مراجعه کنید.');
+            playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-game-alarm-1003.mp3');
+        });
+        
+        // تغییر تم
+        themeOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                themeOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                document.body.className = '';
+                document.body.classList.add(`${option.dataset.theme}-theme`);
+                
+                playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3');
+            });
+        });
+
+        // رویدادهای وضعیت شبکه
+        window.addEventListener('online', () => {
+            isOnline = true;
+            updateUI();
+        });
+        
+        window.addEventListener('offline', () => {
+            isOnline = false;
+            updateUI();
+        });
+        
+        // بررسی اولیه وضعیت شبکه
+        checkConnection();
+        
+        // فوکوس خودکار روی فیلد ورودی در شروع
+        window.onload = () => {
+            userInput.focus();
+            adjustChatLayout(); 
+        };
+
+        // تابع برای به‌روزرسانی ابعاد چت‌باکس هنگام تغییر اندازه صفحه یا تغییرات DOM
+        function adjustChatLayout() {
+            const headerHeight = appHeader.offsetHeight;
+            const inputAreaHeight = inputArea.offsetHeight + parseFloat(getComputedStyle(inputArea).marginBottom) + parseFloat(getComputedStyle(inputArea).marginTop); 
+            
+            chatContainer.style.top = `${headerHeight}px`;
+            chatContainer.style.bottom = `${inputAreaHeight}px`;
+        }
+
+        // Add event listener for window resize
+        window.addEventListener('resize', adjustChatLayout);
+
+        // Initial adjustment after loading screen
+        setTimeout(adjustChatLayout, 1000); 
+    </script>
+</body>
+</html>
