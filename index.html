@@ -1115,7 +1115,7 @@
         // برای امنیت واقعی، باید از یک Backend Server استفاده کنید و کلیدها را در آنجا نگهداری کنید.
         const GEMINI_API_KEYS = [
             'AIzaSyAR05hsGAEyaNTLcj05NbhM8xU7FYvmNRg',
-            'AIzaSyD10Nj1jV_KEwUd9Dio62CHBdB6WeuU6ng',
+            'AIzaSyD10Nj1jV_KEwUd9Dio62CHdB6WeuU6ng',
             'AIzaSyDf5oMDovldeweCto6jJ2KbMZ2vqkgg9GY'
         ];
         
@@ -1141,6 +1141,7 @@
         
         // وضعیت برنامه
         let isOnline = true;
+        let chatHistory = []; // برای نگهداری تاریخچه گفتگو جهت ارسال به API
         
         // شبیه‌سازی بارگذاری اولیه
         setTimeout(() => {
@@ -1166,15 +1167,33 @@
 
             const url = `${GEMINI_BASE_URL}?key=${currentKey}`;
             
+            // آماده‌سازی محتوای گفتگو برای API
+            // شامل یک instruction role برای هدایت مدل به فارسی
+            const contents = [
+                {
+                    role: "user", // این نقش به عنوان یک دستورالعمل پنهان عمل می‌کند
+                    parts: [{ text: "شما یک دستیار هوش مصنوعی مفید هستید و به زبان فارسی پاسخ می‌دهید. لطفاً پاسخ‌هایتان را مختصر و مفید نگه دارید مگر اینکه سوال طولانی باشد." }]
+                }
+            ];
+
+            // افزودن تاریخچه چت واقعی
+            chatHistory.forEach(entry => {
+                contents.push({
+                    role: entry.role === 'user' ? 'user' : 'model', // Gemini 'bot' را به عنوان 'model' می‌شناسد
+                    parts: [{ text: entry.content }]
+                });
+            });
+
+            // افزودن پیام فعلی کاربر
+            contents.push({
+                role: "user",
+                parts: [{ text: messageContent }]
+            });
+
             const requestBody = {
-                contents: [{
-                    role: "user",
-                    parts: [{
-                        text: messageContent
-                    }]
-                }],
+                contents: contents,
                 generationConfig: {
-                    temperature: 0.5, // کاهش دما برای پاسخ‌های مستقیم‌تر
+                    temperature: 0.3, // کاهش بیشتر دما برای پاسخ‌های مستقیم‌تر و کمتر خلاق
                     topP: 0.9,
                     topK: 40
                 }
@@ -1199,6 +1218,7 @@
                         return { error: 'در حال حاضر ترافیک سرور بالا است. لطفاً چند دقیقه دیگر تلاش کنید.' };
                     }
                     
+                    // برای خطاهای 4xx (احراز هویت، ورودی نامعتبر)، کلید بعدی را امتحان می‌کنیم
                     if (response.status >= 400 && response.status < 500) {
                         return secureFetchGemini(messageContent, attempt + 1); 
                     }
@@ -1292,6 +1312,14 @@
             
             chatBox.appendChild(messageDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
+
+            // اضافه کردن به تاریخچه چت فقط برای پیام‌های کاربر و پاسخ‌های مدل
+            chatHistory.push({ role: role, content: content });
+            // می‌توانیم تاریخچه را به اندازه‌ای محدود کنیم تا از ارسال پیام‌های بسیار طولانی به API جلوگیری شود
+            // مثلاً نگهداری 10 پیام آخر
+            if (chatHistory.length > 10) { 
+                chatHistory = chatHistory.slice(-10); // آخرین 10 پیام را نگه می‌دارد
+            }
         }
         
         // تابع نمایش وضعیت تایپ
@@ -1344,7 +1372,6 @@
             userInput.value = '';
             sendButton.disabled = true;
             
-            // بدون پاسخ‌های از پیش تعیین شده، همیشه به API ارسال می‌شود
             showTyping();
             welcomeScreen.style.display = 'none';
             chatContainer.style.display = 'flex';
