@@ -1174,7 +1174,7 @@
                     }]
                 }],
                 generationConfig: {
-                    temperature: 0.7,
+                    temperature: 0.5, // کاهش دما برای پاسخ‌های مستقیم‌تر
                     topP: 0.9,
                     topK: 40
                 }
@@ -1344,38 +1344,7 @@
             userInput.value = '';
             sendButton.disabled = true;
             
-            const lowerCaseMessage = message.toLowerCase();
-            
-            // اضافه کردن پاسخ‌های از پیش تعیین شده برای کلمات فارسی رایج
-            if (lowerCaseMessage.includes('سلام') || lowerCaseMessage.includes('درود')) {
-                hideTyping();
-                addMessage('bot', 'سلام! حال شما چطوره؟ چطور میتونم کمکتون کنم؟');
-                playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-confirmation-909.mp3'); 
-                sendButton.disabled = false;
-                userInput.focus();
-                return;
-            }
-            if (lowerCaseMessage.includes('خوبی؟') || lowerCaseMessage.includes('حالت چطوره؟') || lowerCaseMessage.includes('چطوری؟')) {
-                hideTyping();
-                addMessage('bot', 'ممنونم، من خوبم. شما چطورید؟');
-                playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-confirmation-909.mp3'); 
-                sendButton.disabled = false;
-                userInput.focus();
-                return;
-            }
-            if (lowerCaseMessage.includes('چه کسی تو را ساخته') || 
-                lowerCaseMessage.includes('چه کسی ساخته شدی') ||
-                lowerCaseMessage.includes('سازنده تو کیست') ||
-                lowerCaseMessage.includes('توسط چه کسی آموزش دیده ای') ||
-                lowerCaseMessage.includes('تو کی هستی')) {
-                hideTyping();
-                addMessage('bot', 'من یک هوش مصنوعی هستم که توسط تیم AysChat توسعه و آموزش داده شده‌ام.');
-                playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-confirmation-909.mp3'); 
-                sendButton.disabled = false;
-                userInput.focus();
-                return;
-            }
-
+            // بدون پاسخ‌های از پیش تعیین شده، همیشه به API ارسال می‌شود
             showTyping();
             welcomeScreen.style.display = 'none';
             chatContainer.style.display = 'flex';
