@@ -1,0 +1,29 @@
+# .gitignore
+
+# Python
+pycache/
+*.pyc
+*.pyo
+*.pyd
+.Python/
+env/
+venv/           # پوشه محیط مجازی را نادیده بگیر
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Django
+*.sqlite3       # فایل پایگاه داده SQLite
+media/          # پوشه‌ای که فایل‌های آپلود شده کاربران در آن ذخیره می‌شوند (بعداً اضافه می‌شود)
+
+# Environment variables
+.env            # فایل حاوی کلیدهای API و متغیرهای محیطی حساس را نادیده بگیر
+
+# IDEs
+.idea/          # پوشه‌های IDE مانند PyCharm
+.vscode/        # پوشه‌های VS Code
+
+# OS generated files
+.DS_Store
+.Trashes
+ehthumbs.db
+Thumbs.db
