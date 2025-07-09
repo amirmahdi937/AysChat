@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'AysChatProgect.urls'
+ROOT_URLCONF = 'AysChatProject.urls'
 
 TEMPLATES = [
     {
@@ -69,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'AysChatProgect.wsgi.application'
+WSGI_APPLICATION = 'AysChatProject.wsgi.application'
 
 
 # Database
