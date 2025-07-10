@@ -7,14 +7,19 @@ import json
 import requests
 import os # <-- این خط برای دسترسی به os.getenv لازم است
 
+from django.conf import settings
+import google.generativeai as genai
+
+genai.configure(api_key=settings.GEMINI_API_KEY)
+
 # ------------------- مدیریت امن کلیدهای API -------------------
 # کلیدهای API از متغیرهای محیطی که از فایل .env بارگذاری شده‌اند، خوانده می‌شوند.
 # به این ترتیب، کلیدها در کد سورس قرار نمی‌گیرند و در گیت‌هاب منتشر نخواهند شد.
 # ---------------------------------------------------------------
 GEMINI_API_KEYS = [
+    os.getenv('GEMINI_API_KEY'),
     os.getenv('GEMINI_API_KEY_1'),
     os.getenv('GEMINI_API_KEY_2'),
-    os.getenv('GEMINI_API_KEY_3'),
 ]
 
 # حذف کلیدهای API خالی یا None از لیست
