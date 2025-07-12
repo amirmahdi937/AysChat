@@ -1,6 +1,8 @@
-// فایل: AysChat_Django/static/js/script.js
-
 // ** 1. تعریف متغیرهای سراسری (Global Variables) **
+
+// اضافه کردن آدرس API بک‌اند Render
+const RENDER_API_BASE_URL = "https://ayschat.onrender.com"; // این URL واقعی شماست
+
 // مطمئن شوید که تمام عناصر HTML که با getElementById یا querySelector انتخاب می‌کنید، در بالای فایل تعریف شده‌اند.
 const loadingScreen = document.getElementById('loading-screen');
 const welcomeScreen = document.getElementById('welcome-screen');
@@ -66,8 +68,6 @@ function checkConnection() {
 
 // تابع برای افزودن پیام به چت‌باکس
 function addMessage(sender, message, isTyping = false) {
-    // ... کد موجود addMessage خود را اینجا قرار دهید ...
-    // این شامل createElement, appendChild, scrollIntoView و ... می‌شود.
     const messageElement = document.createElement('div');
     messageElement.classList.add('message', `${sender}-message`);
     if (isTyping) {
@@ -82,12 +82,11 @@ function addMessage(sender, message, isTyping = false) {
     }
     chatBox.appendChild(messageElement);
     chatBox.scrollTop = chatBox.scrollHeight;
+    return messageElement; // اضافه کردن این خط برای برگرداندن المنت نشانگر تایپ
 }
 
 // تابع برای ارسال پیام
 function sendMessage() {
-    // ... کد موجود sendMessage خود را اینجا قرار دهید ...
-    // این شامل گرفتن ورودی، فراخوانی secureFetchGemini، مدیریت پاسخ‌ها و خطاها می‌شود.
     const message = userInput.value.trim();
     if (message === '') return;
 
@@ -336,12 +335,10 @@ if (animationsToggle) {
     }
 }
 
-// ** 6. فرض بر این است که تابع secureFetchGemini در اینجا یا در فایل دیگری تعریف شده است. **
-// اگر این تابع هنوز تعریف نشده است، باید کد آن را اینجا اضافه کنید.
+// ** 6. تابع secureFetchGemini - به‌روزرسانی شده برای استفاده از آدرس Render **
 async function secureFetchGemini(prompt) {
-    // ... کد موجود secureFetchGemini شما ...
-    // این شامل فراخوانی API جنگو و دریافت پاسخ از Gemini می‌شود.
-    const response = await fetch('/chat/', { // فرض بر این است که یک URL به نام '/chat/' دارید
+    // استفاده از RENDER_API_BASE_URL برای ساخت URL کامل
+    const response = await fetch(`${RENDER_API_BASE_URL}/chat/`, { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
