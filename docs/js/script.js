@@ -353,7 +353,7 @@ async function secureFetchGemini(prompt) {
     }
 
     const data = await response.json();
-    return data.response; // فرض بر این است که پاسخ در فیلد 'response' است
+    return data.response;
 }
 
 // تابع کمکی برای دریافت CSRF Token (اگر نیاز دارید)
