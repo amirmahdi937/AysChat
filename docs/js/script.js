@@ -1,7 +1,7 @@
 // ** 1. تعریف متغیرهای سراسری (Global Variables) **
 
 // اضافه کردن آدرس API بک‌اند Render
-const RENDER_API_BASE_URL = "https://ayschat.onrender.com"; // این URL واقعی شماست
+const RENDER_API_BASE_URL = 'https://ayschat.onrender.com'; // این URL واقعی شماست
 
 // مطمئن شوید که تمام عناصر HTML که با getElementById یا querySelector انتخاب می‌کنید، در بالای فایل تعریف شده‌اند.
 const loadingScreen = document.getElementById('loading-screen');
@@ -118,7 +118,7 @@ function sendMessage() {
             if (typingIndicator && typingIndicator.parentNode) {
                 typingIndicator.parentNode.removeChild(typingIndicator);
             }
-            addMessage('ai', 'متاسفانه خطایی در ارتباط با سرور رخ داد. لطفاً دوباره تلاش کنید.');
+            addMessage('ai', 'متاسفانه خط');
             playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3');
         });
 }
