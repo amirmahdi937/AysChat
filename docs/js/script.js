@@ -21,7 +21,17 @@ const retryButton = document.getElementById('retry-btn');
 const appHeader = document.querySelector('.app-header'); // برای تابع adjustChatLayout
 const inputArea = document.querySelector('.input-area'); // برای تابع adjustChatLayout
 const viewPrivacyButton = document.getElementById('view-privacy');
+const express = require('express')
+const app = express()
+const port = process.env.PORT || 4000
 
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
 let isOnline = navigator.onLine; // وضعیت اولیه اتصال
 let currentTheme = localStorage.getItem('theme') || 'light';
 let isSoundEffectsEnabled = localStorage.getItem('soundEffects') === 'true' || true;
