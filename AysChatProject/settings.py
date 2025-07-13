@@ -27,7 +27,9 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-default-insecu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'ayschat.onrender.com',
+]
 CORS_ALLOWED_ORIGINS = [
     "https://amirmahdi937.github.io/AysChat/",
 ]
