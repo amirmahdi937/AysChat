@@ -118,7 +118,7 @@ function sendMessage() {
             if (typingIndicator && typingIndicator.parentNode) {
                 typingIndicator.parentNode.removeChild(typingIndicator);
             }
-            addMessage('ai', 'متاسفانه خط');
+            addMessage('ai', 'متاسفانه خطایی در ارتباط با سرور رخ داد. لطفاً دوباره تلاش کنید.');
             playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3');
         });
 }
