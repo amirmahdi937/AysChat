@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 CORS_ALLOWED_ORIGINS = [
-    "ayschat.onrender.com",
+    'https://amirmahdi937.github.io/AysChat',
 ]
 
 # Application definition
