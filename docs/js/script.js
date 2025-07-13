@@ -1,7 +1,7 @@
 // ** 1. تعریف متغیرهای سراسری (Global Variables) **
 
 // اضافه کردن آدرس API بک‌اند Render
-const RENDER_API_BASE_URL = 'https://ayschat.onrender.com'; // این URL واقعی شماست
+const RENDER_API_BASE_URL = "https://ayschat.onrender.com";
 
 // مطمئن شوید که تمام عناصر HTML که با getElementById یا querySelector انتخاب می‌کنید، در بالای فایل تعریف شده‌اند.
 const loadingScreen = document.getElementById('loading-screen');
