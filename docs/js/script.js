@@ -99,7 +99,6 @@ function sendMessage() {
 
     const typingIndicator = addMessage('ai', '...', true); // نمایش نشانگر تایپ
 
-    // فرض می‌کنیم secureFetchGemini تعریف شده است
     secureFetchGemini(message)
         .then(response => {
             // حذف نشانگر تایپ
@@ -109,12 +108,30 @@ function sendMessage() {
             addMessage('ai', response);
             playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-alert-sound-2210.mp3');
         })
-        .catch(error => {
+        .catch(async error => { // **Async را به اینجا اضافه کنید**
             console.error('Error fetching from Gemini API:', error);
             if (typingIndicator && typingIndicator.parentNode) {
                 typingIndicator.parentNode.removeChild(typingIndicator);
             }
-            addMessage('ai', 'متاسفانه خطایی در ارتباط با سرور رخ داد. لطفاً دوباره تلاش کنید.');
+            let errorMessage = 'متاسفانه خطایی در ارتباط با سرور رخ داد. لطفاً دوباره تلاش کنید.';
+            
+            try {
+                // تلاش برای خواندن پیام خطای دقیق‌تر از پاسخ سرور
+                const errorResponseText = error.message.split('message: ')[1];
+                if (errorResponseText) {
+                    const errorJson = JSON.parse(errorResponseText);
+                    if (errorJson.error) {
+                        errorMessage = `خطا از سرور: ${errorJson.error}`;
+                    } else {
+                        errorMessage = `خطا از سرور: ${errorResponseText}`;
+                    }
+                }
+            } catch (parseError) {
+                console.error("Could not parse error response from server:", parseError);
+                // اگر JSON parse نشد، همان پیام عمومی را نمایش می‌دهیم.
+            }
+
+            addMessage('ai', errorMessage);
             playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3');
         });
 }
@@ -344,8 +361,20 @@ async function secureFetchGemini(prompt) {
     });
 
     if (!response.ok) {
+        // تغییرات اینجا اعمال می‌شود برای دریافت پیام خطای دقیق‌تر
         const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+            const errorJson = JSON.parse(errorText);
+            if (errorJson.error) {
+                errorMessage += `, message: ${errorJson.error}`;
+            } else {
+                errorMessage += `, raw response: ${errorText}`;
+            }
+        } catch (e) {
+            errorMessage += `, raw response: ${errorText}`;
+        }
+        throw new Error(errorMessage);
     }
 
     const data = await response.json();
