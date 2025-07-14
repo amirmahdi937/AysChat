@@ -14,10 +14,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# AysChat_Django/AysChatProject/urls.py
+
 from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('chatbot_app.urls')),
+    path('admin/', admin.site.urls),           # فقط یک بار ادمین را در اینجا تعریف کنید
+    path('chat/', include('chatbot_app.urls')),   # تمام آدرس‌های زیر /chat/ را به chat_app/urls.py بفرست
+    # !!! تمام خطوط دیگر (به خصوص path('', include('chatbot_app.urls'))) را حذف کنید !!!
+    # !!! و هیچ TemplateView یا static file serving برای ریشه سایت نداشته باشید !!!
 ]

@@ -1,6 +1,5 @@
-// فایل: AysChat_Django/static/js/script.js
+const RENDER_API_BASE_URL = "https://ayschat.onrender.com";
 
-// ** 1. تعریف متغیرهای سراسری (Global Variables) **
 // مطمئن شوید که تمام عناصر HTML که با getElementById یا querySelector انتخاب می‌کنید، در بالای فایل تعریف شده‌اند.
 const loadingScreen = document.getElementById('loading-screen');
 const welcomeScreen = document.getElementById('welcome-screen');
@@ -22,7 +21,6 @@ const retryButton = document.getElementById('retry-btn');
 const appHeader = document.querySelector('.app-header'); // برای تابع adjustChatLayout
 const inputArea = document.querySelector('.input-area'); // برای تابع adjustChatLayout
 const viewPrivacyButton = document.getElementById('view-privacy');
-
 
 let isOnline = navigator.onLine; // وضعیت اولیه اتصال
 let currentTheme = localStorage.getItem('theme') || 'light';
@@ -66,8 +64,6 @@ function checkConnection() {
 
 // تابع برای افزودن پیام به چت‌باکس
 function addMessage(sender, message, isTyping = false) {
-    // ... کد موجود addMessage خود را اینجا قرار دهید ...
-    // این شامل createElement, appendChild, scrollIntoView و ... می‌شود.
     const messageElement = document.createElement('div');
     messageElement.classList.add('message', `${sender}-message`);
     if (isTyping) {
@@ -82,12 +78,11 @@ function addMessage(sender, message, isTyping = false) {
     }
     chatBox.appendChild(messageElement);
     chatBox.scrollTop = chatBox.scrollHeight;
+    return messageElement; // اضافه کردن این خط برای برگرداندن المنت نشانگر تایپ
 }
 
 // تابع برای ارسال پیام
 function sendMessage() {
-    // ... کد موجود sendMessage خود را اینجا قرار دهید ...
-    // این شامل گرفتن ورودی، فراخوانی secureFetchGemini، مدیریت پاسخ‌ها و خطاها می‌شود.
     const message = userInput.value.trim();
     if (message === '') return;
 
@@ -104,7 +99,6 @@ function sendMessage() {
 
     const typingIndicator = addMessage('ai', '...', true); // نمایش نشانگر تایپ
 
-    // فرض می‌کنیم secureFetchGemini تعریف شده است
     secureFetchGemini(message)
         .then(response => {
             // حذف نشانگر تایپ
@@ -114,12 +108,30 @@ function sendMessage() {
             addMessage('ai', response);
             playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-alert-sound-2210.mp3');
         })
-        .catch(error => {
+        .catch(async error => { // **Async را به اینجا اضافه کنید**
             console.error('Error fetching from Gemini API:', error);
             if (typingIndicator && typingIndicator.parentNode) {
                 typingIndicator.parentNode.removeChild(typingIndicator);
             }
-            addMessage('ai', 'متاسفانه خطایی در ارتباط با سرور رخ داد. لطفاً دوباره تلاش کنید.');
+            let errorMessage = 'متاسفانه خطایی در ارتباط با سرور رخ داد. لطفاً دوباره تلاش کنید.';
+            
+            try {
+                // تلاش برای خواندن پیام خطای دقیق‌تر از پاسخ سرور
+                const errorResponseText = error.message.split('message: ')[1];
+                if (errorResponseText) {
+                    const errorJson = JSON.parse(errorResponseText);
+                    if (errorJson.error) {
+                        errorMessage = `خطا از سرور: ${errorJson.error}`;
+                    } else {
+                        errorMessage = `خطا از سرور: ${errorResponseText}`;
+                    }
+                }
+            } catch (parseError) {
+                console.error("Could not parse error response from server:", parseError);
+                // اگر JSON parse نشد، همان پیام عمومی را نمایش می‌دهیم.
+            }
+
+            addMessage('ai', errorMessage);
             playSoundEffect('https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3');
         });
 }
@@ -336,12 +348,10 @@ if (animationsToggle) {
     }
 }
 
-// ** 6. فرض بر این است که تابع secureFetchGemini در اینجا یا در فایل دیگری تعریف شده است. **
-// اگر این تابع هنوز تعریف نشده است، باید کد آن را اینجا اضافه کنید.
+// ** 6. تابع secureFetchGemini - به‌روزرسانی شده برای استفاده از آدرس Render **
 async function secureFetchGemini(prompt) {
-    // ... کد موجود secureFetchGemini شما ...
-    // این شامل فراخوانی API جنگو و دریافت پاسخ از Gemini می‌شود.
-    const response = await fetch('/chat/', { // فرض بر این است که یک URL به نام '/chat/' دارید
+    // استفاده از RENDER_API_BASE_URL برای ساخت URL کامل
+    const response = await fetch(`${RENDER_API_BASE_URL}/chat/`, { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -351,12 +361,24 @@ async function secureFetchGemini(prompt) {
     });
 
     if (!response.ok) {
+        // تغییرات اینجا اعمال می‌شود برای دریافت پیام خطای دقیق‌تر
         const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+            const errorJson = JSON.parse(errorText);
+            if (errorJson.error) {
+                errorMessage += `, message: ${errorJson.error}`;
+            } else {
+                errorMessage += `, raw response: ${errorText}`;
+            }
+        } catch (e) {
+            errorMessage += `, raw response: ${errorText}`;
+        }
+        throw new Error(errorMessage);
     }
 
     const data = await response.json();
-    return data.response; // فرض بر این است که پاسخ در فیلد 'response' است
+    return data.response;
 }
 
 // تابع کمکی برای دریافت CSRF Token (اگر نیاز دارید)
