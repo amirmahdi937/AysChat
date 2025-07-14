@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-GEMINI_API_KEY = os.getenv('ayschat.onrender.com')
+GEMINI_API_KEY = os.getenv('https://ayschat.onrender.com/chat/')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-default-insecu
 DEBUG = False 
 
 ALLOWED_HOSTS = [
-    'ayschat.onrender.com',
+    'https://ayschat.onrender.com/chat/',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
