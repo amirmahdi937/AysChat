@@ -56,7 +56,7 @@ def chat_api(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            user_message = data.get('prompt', '').strip()
+            user_message = data.get('prompt').strip()
             session_id = request.COOKIES.get('session_id') # فرض کنید session_id از کوکی می‌آید.
                                                            # در غیر این صورت، می‌توانید از IP یا روش دیگری استفاده کنید.
             if not session_id:
