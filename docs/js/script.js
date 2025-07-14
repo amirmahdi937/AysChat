@@ -351,7 +351,7 @@ if (animationsToggle) {
 // ** 6. تابع secureFetchGemini - به‌روزرسانی شده برای استفاده از آدرس Render **
 async function secureFetchGemini(prompt) {
     // استفاده از RENDER_API_BASE_URL برای ساخت URL کامل
-    const response = await fetch(`${RENDER_API_BASE_URL}/chat/`, { 
+    const response = await fetch('https://ayschat.onrender.com/chat/', { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
