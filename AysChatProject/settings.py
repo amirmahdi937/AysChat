@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-default-insecu
 DEBUG = False 
 
 ALLOWED_HOSTS = [
-    'https://ayschat.onrender.com/chat/',
+    'https://ayschat.onrender.com',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
