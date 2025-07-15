@@ -1,4 +1,4 @@
-const RENDER_API_BASE_URL = "https://ayschat.onrender.com";
+const RENDER_API_BASE_URL = "https://ayschat.onrender.com/chat/";
 
 // مطمئن شوید که تمام عناصر HTML که با getElementById یا querySelector انتخاب می‌کنید، در بالای فایل تعریف شده‌اند.
 const loadingScreen = document.getElementById('loading-screen');
