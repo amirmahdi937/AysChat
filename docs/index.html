@@ -121,11 +121,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Vazirmatn:wght@300;400;700&display=swap" rel="stylesheet">
     <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self';
+    script-src 'self' 'unsafe-inline'; # 'unsafe-inline' اگر کدهای جاوا اسکریپت inline دارید. بهتر است حذف شود و کد به فایل های جداگانه منتقل شود.
     connect-src 'self' https://generativelanguage.googleapis.com https://ayschat.onrender.com;
-    font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com; # برای فونت های گوگل
+    font-src 'self' data: https://fonts.gstatic.com; # برای فونت های گوگل
     media-src 'self' https://assets.mixkit.co; # برای فایل صوتی mixkit
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; # اگر استایل های inline دارید و از فونت های گوگل استفاده می کنید
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; # برای استایل های inline و فونت های گوگل
+    img-src 'self' data:; # اگر تصاویر inline یا base64 دارید
 ">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
