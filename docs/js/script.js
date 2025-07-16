@@ -1,4 +1,4 @@
-const RENDER_API_BASE_URL = "https://ayschat.onrender.com/chat/";
+const RENDER_API_BASE_URL = "https://ayschat.onrender.com";
 
 // مطمئن شوید که تمام عناصر HTML که با getElementById یا querySelector انتخاب می‌کنید، در بالای فایل تعریف شده‌اند.
 const loadingScreen = document.getElementById('loading-screen');
@@ -351,7 +351,7 @@ if (animationsToggle) {
 // ** 6. تابع secureFetchGemini - به‌روزرسانی شده برای استفاده از آدرس Render **
 async function secureFetchGemini(prompt) {
     // استفاده از RENDER_API_BASE_URL برای ساخت URL کامل
-    const response = await fetch('https://ayschat.onrender.com/chat/', { 
+    const response = await fetch({RENDER_API_BASE_URL}, '/chat/', { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
