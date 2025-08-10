@@ -4,9 +4,9 @@
 // هر کسی که به کد شما دسترسی داشته باشد، می‌تواند این کلیدها را ببیند و از آن‌ها سوءاستفاده کند.
 // برای امنیت واقعی، باید از یک Backend Server استفاده کنید و کلیدها را در آنجا نگهداری کنید.
 const GEMINI_API_KEYS = [
-    'AIzaSyAR05hsGAEyaNTLcj05NbhM8xU7FYvmNRg',
-    'AIzaSyD10Nj1jV_KEwUd9Dio62CHBdB6WeuU6ng',
-    'AIzaSyDf5oMDovldeweCto6jJ2KbMZ2vqkgg9GY'
+    'کلید API شماره ۱ خود را اینجا قرار دهید',
+    'کلید API شماره ۲ خود را اینجا قرار دهید',
+    'کلید API شماره ۳ خود را اینجا قرار دهید'
 ];
 
 // تنظیمات
